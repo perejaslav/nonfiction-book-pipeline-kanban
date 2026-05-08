@@ -73,6 +73,7 @@ The pipeline is intentionally **not** just “create 9 cards and hope”. It mus
 4. **Validated** — QA cards and validation scripts check files, placeholders, chapter counts, source-audit outputs, and word count.
 5. **Reproducible** — task creation uses the official `hermes kanban create --json --parent --idempotency-key` interface, not raw SQLite.
 6. **Recoverable** — manuscript backups are required before assembly/final edit.
+7. **Preflight-repaired** — the initializer performs a soft preflight for required profiles and Kanban runtime, repairs what it can, and warns about anything still missing instead of hard-failing installation.
 
 ## Confidence statement
 
@@ -185,6 +186,7 @@ Current Hermes runs Kanban dispatcher inside the gateway by default. `hermes kan
 │   ├── pre-assembly-qa.md
 │   ├── assembly-report.md
 │   ├── final-edit-report.md
+│   ├── russian-norm-check.md
 │   └── validation-*.md
 ├── checkpoints/
 │   ├── manuscript-before-assembly.md
@@ -214,6 +216,8 @@ Assembly (default)
   ↓
 Final Edit (reviewer)
   ↓
+Russian Norm Check (reviewer)
+  ↓
 Final QA (reviewer)
 ```
 
@@ -226,7 +230,7 @@ The init script creates this graph with `--parent` dependencies. This is mandato
 | `researcher` | Optional Source Audit, source map, factual spine, risk register |
 | `analyst` | Structure, chapter briefs, facts/terms/voice |
 | `writer` | Draft chapter waves and reference apparatus |
-| `reviewer` | QA gates, final edit, final validation |
+| `reviewer` | QA gates, final edit, Russian norm check, final validation |
 | `default` | Deterministic assembly / mechanical tasks |
 
 Profiles should be created with `hermes profile create <name> --clone` so config/model/env are inherited. Do not rely on `hermes profile create researcher writer analyst` — CLI creates one profile at a time.
@@ -262,8 +266,9 @@ It checks:
 - foundation has 5 required files.
 - chapter count is high enough.
 - chapters are not empty.
-- bad placeholders are absent.
+- `bad placeholders` are absent.
 - source-audit outputs exist when `source_mode` is `user` or `agent`.
+- Russian Norm Check report exists after Final Edit.
 - manuscript has frontmatter.
 - word count is near target.
 
@@ -373,7 +378,8 @@ When using this skill:
 - [ ] Foundation produces `05-chapter-briefs.md`.
 - [ ] QA precedes Assembly.
 - [ ] Assembly precedes Final Edit.
-- [ ] Final QA runs after Final Edit.
+- [ ] Russian Norm Check runs after Final Edit and before Final QA.
+- [ ] Final QA runs after Russian Norm Check.
 - [ ] Source Audit mode is explicit: `user`, `agent`, or `none`.
 - [ ] In `user` mode, `<project>/sources/` or `<project>/sources/urls.txt` exists before board creation.
 - [ ] In `agent` mode, first ready task is `Source Audit (agent)`.
@@ -385,6 +391,9 @@ When using this skill:
 
 - `scripts/init-project.py` — robust initializer.
 - `scripts/validate-project.py` — artifact validator.
+- `scripts/preflight-check.py` — soft preflight for profiles and Kanban runtime.
 - `templates/intake-template.json` — intake template.
+- `references/russian-norm-check.md` — strict Russian language norms checklist.
 - `references/kanban-setup.md` — expanded setup notes.
 - `references/audit-v2-lessons.md` — session-derived loopholes, tested fixes, and confidence framing.
+- `references/preflight-check.md` — soft preflight repair policy and behavior.

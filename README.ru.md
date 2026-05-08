@@ -2,7 +2,7 @@
 
 Hermes Agent skill для написания длинных научно-популярных книг через устойчивую Kanban-оркестрацию.
 
-Главная идея: пользователь говорит обычными словами, что за книгу хочет написать, даёт синопсис/план/источники, а Hermes сам делает техническую работу: создаёт проект, Kanban-доску, dependency graph, карточки для researcher/analyst/writer/reviewer, запускает Source Audit, волны написания, QA, сборку manuscript, финальное ревью и валидацию.
+Главная идея: пользователь говорит обычными словами, что за книгу хочет написать, даёт синопсис/план/источники, а Hermes сам делает техническую работу: создаёт проект, Kanban-доску, dependency graph, карточки для researcher/analyst/writer/reviewer, запускает Source Audit, волны написания, QA, сборку manuscript, финальное ревью, Russian Norm Check и валидацию.
 
 ## Что умеет
 
@@ -38,6 +38,8 @@ Pre-Assembly QA
 Assembly
   ↓
 Final Edit
+  ↓
+Russian Norm Check
   ↓
 Final QA
 ```
@@ -127,6 +129,8 @@ python3 ~/.hermes/skills/nonfiction-book-pipeline-kanban/scripts/validate-projec
 SKILL.md                         основной Hermes skill
 references/kanban-setup.md       setup и troubleshooting
 references/audit-v2-lessons.md   lessons и confidence framing
+references/preflight-check.md    soft preflight repair policy
+references/russian-norm-check.md Russian Norm Check checklist
 scripts/init-project.py          robust initializer
 scripts/validate-project.py      artifact validator
 templates/intake-template.json   intake template

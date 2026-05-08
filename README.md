@@ -2,7 +2,7 @@
 
 A Hermes Agent skill for writing long-form nonfiction and popular-science books through durable Kanban orchestration.
 
-This skill lets a user give a natural-language book request, synopsis, plan, or source list while Hermes handles the operational work: project setup, Kanban board creation, task graph, researcher/analyst/writer/reviewer profiles, source audit, drafting waves, QA gates, deterministic manuscript assembly, final edit, and validation.
+This skill lets a user give a natural-language book request, synopsis, plan, or source list while Hermes handles the operational work: project setup, Kanban board creation, task graph, researcher/analyst/writer/reviewer profiles, source audit, drafting waves, QA gates, deterministic manuscript assembly, final edit, Russian Norm Check, and validation.
 
 ## What it does
 
@@ -38,6 +38,8 @@ Pre-Assembly QA
 Assembly
   ↓
 Final Edit
+  ↓
+Russian Norm Check
   ↓
 Final QA
 ```
@@ -129,6 +131,8 @@ If the user explicitly says not to use Kanban, use the classic `nonfiction-book-
 SKILL.md                         Main Hermes skill
 references/kanban-setup.md       Setup and troubleshooting notes
 references/audit-v2-lessons.md   Audit lessons and confidence framing
+references/preflight-check.md     Soft preflight repair policy
+references/russian-norm-check.md Russian Norm Check checklist
 scripts/init-project.py          Robust initializer
 scripts/validate-project.py      Artifact validator
 templates/intake-template.json   Intake template

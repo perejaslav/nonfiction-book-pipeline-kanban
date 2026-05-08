@@ -8,6 +8,7 @@ Creates:
 - Kanban board
 - 10-11 dependency-gated tasks via official Hermes CLI, not raw SQLite
 - optional Source Audit mode: user | agent | none
+- soft preflight for required Hermes profiles and Kanban runtime
 
 Usage:
   python3 init-project.py "Book Title" ~/my-book [--synopsis-file synopsis.md]
@@ -296,6 +297,9 @@ def main() -> None:
     validate_intake(project, args.allow_placeholder or synopsis_file is None)
     if not args.skip_profiles:
         ensure_profiles()
+    preflight = Path(__file__).with_name("preflight-check.py")
+    if preflight.exists():
+        sh(["python3", str(preflight)], check=False)
     ensure_board(board)
     create_graph(board, project, args.source_mode)
 
