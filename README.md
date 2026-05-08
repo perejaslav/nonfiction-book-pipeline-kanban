@@ -89,6 +89,8 @@ python3 ~/.hermes/skills/nonfiction-book-pipeline-kanban/scripts/init-project.py
   --source-mode agent
 ```
 
+The script runs a soft preflight that checks required profiles (`researcher`, `analyst`, `writer`, `reviewer`, `default`) and the Kanban runtime. It repairs missing profiles when possible and warns about anything still missing instead of aborting installation.
+
 Source modes:
 
 ```bash
