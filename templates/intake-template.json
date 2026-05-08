@@ -1,0 +1,19 @@
+{
+  "title": "Название книги",
+  "subtitle": "Подзаголовок",
+  "author": "",
+  "synopsis": "Здесь должен быть текст синопсиса. Опишите: о чём книга, почему она важна, для кого предназначена, какие основные темы и аргументы раскрывает.",
+  "language": "ru",
+  "target_words": 70000,
+  "target_chapters": 16,
+  "tone": "академический научно-популярный",
+  "source_mode": "agent",
+  "source_policy": "agent: researcher finds and cross-checks sources; user: use sources/ and sources/urls.txt; none: skip separate Source Audit",
+  "quality_bar": {
+    "min_chapter_words": 1500,
+    "target_chapter_words": 2500,
+    "require_cautious_claims": true,
+    "forbid_placeholders": true,
+    "require_source_register": true
+  }
+}
