@@ -1,26 +1,26 @@
 # NonFiction Book Pipeline Kanban
 
-A Hermes Agent skill for writing long-form nonfiction and popular-science books through durable Kanban orchestration.
+Hermes Agent skill для написания длинных научно-популярных книг через устойчивую Kanban-оркестрацию.
 
-This skill lets a user give a natural-language book request, synopsis, plan, or source list while Hermes handles the operational work: project setup, Kanban board creation, task graph, researcher/analyst/writer/reviewer profiles, source audit, drafting waves, QA gates, deterministic manuscript assembly, final edit, Russian Norm Check, and validation.
+Главная идея: пользователь говорит обычными словами, что за книгу хочет написать, даёт синопсис/план/источники, а Hermes сам делает техническую работу: создаёт проект, Kanban-доску, dependency graph, карточки для researcher/analyst/writer/reviewer, запускает Source Audit, волны написания, QA, сборку manuscript, финальное ревью, Russian Norm Check и валидацию.
 
-## What it does
+## Что умеет
 
-- Creates a complete book project structure.
-- Creates a Hermes Kanban board and dependency-gated task graph.
-- Supports optional Source Audit modes:
-  - `user` — use files in `sources/` or URLs in `sources/urls.txt`.
-  - `agent` — researcher finds and cross-checks web sources. Default.
-  - `none` — skip separate Source Audit for lighter drafts.
-- Uses official Hermes Kanban CLI with `HERMES_KANBAN_BOARD`, `--json`, `--parent`, and `--idempotency-key`.
-- Avoids raw SQLite task creation in the normal path.
-- Adds QA gates before assembly and final delivery.
-- Includes validation scripts for artifacts, placeholders, chapter counts, source-audit outputs, and word count.
+- Создаёт структуру проекта книги.
+- Создаёт Hermes Kanban-доску и dependency-gated task graph.
+- Поддерживает опциональный Source Audit:
+  - `user` — использовать файлы в `sources/` или URL в `sources/urls.txt`.
+  - `agent` — researcher сам ищет и перепроверяет источники в интернете. Режим по умолчанию.
+  - `none` — пропустить отдельный Source Audit для лёгкого черновика.
+- Использует официальный Hermes Kanban CLI: `HERMES_KANBAN_BOARD`, `--json`, `--parent`, `--idempotency-key`.
+- Не использует прямые SQLite insert в штатном режиме.
+- Добавляет QA-gates перед сборкой и финальной сдачей.
+- Включает validator для проверки артефактов, placeholders, количества глав, source-audit outputs и word count.
 
-## Pipeline graph
+## Граф pipeline
 
 ```text
-Source Audit (optional: user|agent)
+Source Audit (опционально: user|agent)
   ↓
 Research
   ↓
@@ -44,9 +44,9 @@ Russian Norm Check
 Final QA
 ```
 
-## Installation
+## Установка
 
-Install directly into your Hermes Agent skills directory:
+Рекомендуемый способ — клонировать весь репозиторий в директорию skills:
 
 ```bash
 mkdir -p ~/.hermes/skills/nonfiction-book-pipeline-kanban
@@ -54,90 +54,88 @@ git clone https://github.com/perejaslav/nonfiction-book-pipeline-kanban.git \
   ~/.hermes/skills/nonfiction-book-pipeline-kanban
 ```
 
-Then start a fresh Hermes session or reload skills.
+После этого начните новую Hermes-сессию или перезагрузите skills.
 
-If your Hermes installation supports skill install from URL, you can also install from:
+Если ваша версия Hermes поддерживает установку по URL, можно использовать:
 
 ```text
 https://raw.githubusercontent.com/perejaslav/nonfiction-book-pipeline-kanban/main/SKILL.md
 ```
 
-Note: this repository includes supporting files (`scripts/`, `templates/`, `references/`), so cloning the full repository is recommended.
+Но лучше клонировать весь репозиторий, потому что скилл использует `scripts/`, `templates/` и `references/`.
 
-## Natural-language usage
+## Использование обычным языком
 
-The intended workflow is not terminal-first. The user should be able to say:
-
-```text
-Write a 70,000-word popular-science book about the Trebizond Empire. Use Kanban. Find and cross-check sources yourself.
-```
-
-or:
+Это не terminal-first workflow. Пользователь должен иметь возможность сказать:
 
 ```text
-Here is my plan and source list. Write the book using Kanban.
+Напиши научно-популярную книгу о Трапезундской империи на 70 000 слов. Используй Kanban. Источники найди и перепроверь сам.
 ```
 
-Hermes should then use this skill as the operator playbook and run the setup internally.
+или:
 
-## Manual operator usage
+```text
+Вот мой план и список источников. Напиши по ним книгу через Kanban.
+```
 
-For operators who want to run the initializer directly:
+Hermes должен сам загрузить этот skill и выполнить техническую работу как оператор.
+
+## Ручной запуск для оператора
+
+Если нужно запустить инициализацию вручную:
 
 ```bash
 python3 ~/.hermes/skills/nonfiction-book-pipeline-kanban/scripts/init-project.py \
-  "Book Title" ~/my-book \
+  "Название книги" ~/my-book \
   --synopsis-file ~/synopsis.md \
   --source-mode agent
 ```
 
-The script runs a soft preflight that checks required profiles (`researcher`, `analyst`, `writer`, `reviewer`, `default`) and the Kanban runtime. It repairs missing profiles when possible and warns about anything still missing instead of aborting installation.
-
-Source modes:
+Режимы источников:
 
 ```bash
---source-mode user   # requires ~/my-book/sources/ or ~/my-book/sources/urls.txt
---source-mode agent  # default: researcher performs web source audit
---source-mode none   # skip separate Source Audit
+--source-mode user   # требует ~/my-book/sources/ или ~/my-book/sources/urls.txt
+--source-mode agent  # default: researcher делает web source audit
+--source-mode none   # пропустить отдельный Source Audit
 ```
 
-Validate artifacts:
+Валидация проекта:
 
 ```bash
 python3 ~/.hermes/skills/nonfiction-book-pipeline-kanban/scripts/validate-project.py ~/my-book --stage all
 ```
 
-## Requirements
+## Требования
 
-- Hermes Agent with Kanban support.
-- Profiles conventionally named:
+- Hermes Agent с поддержкой Kanban.
+- Профили:
   - `researcher`
   - `analyst`
   - `writer`
   - `reviewer`
   - `default`
-- A working model/provider configuration for those profiles.
-- Gateway or dispatcher runtime for Kanban task execution.
+- Рабочая model/provider конфигурация для этих профилей.
+- Gateway или dispatcher runtime для выполнения Kanban-задач.
 
-## Routing rule
+## Правило маршрутизации
 
-For new end-to-end book projects where the user explicitly asks to use Kanban, use this skill.
+Если пользователь явно просит использовать Kanban для новой книги — использовать этот skill.
 
-If the user explicitly says not to use Kanban, use the classic `nonfiction-book-pipeline` skill instead.
+Если пользователь явно говорит “без Kanban” — использовать classic `nonfiction-book-pipeline`.
 
-## Repository contents
+## Состав репозитория
 
 ```text
-SKILL.md                         Main Hermes skill
-references/kanban-setup.md       Setup and troubleshooting notes
-references/audit-v2-lessons.md   Audit lessons and confidence framing
-references/preflight-check.md     Soft preflight repair policy
+SKILL.md                         основной Hermes skill
+references/kanban-setup.md       setup и troubleshooting
+references/audit-v2-lessons.md   lessons и confidence framing
+references/preflight-check.md    soft preflight repair policy
 references/russian-norm-check.md Russian Norm Check checklist
-scripts/init-project.py          Robust initializer
-scripts/validate-project.py      Artifact validator
-templates/intake-template.json   Intake template
+scripts/init-project.py          robust initializer
+scripts/validate-project.py      artifact validator
+templates/intake-template.json   intake template
 ```
 
-## License
+## Лицензия
 
 MIT
